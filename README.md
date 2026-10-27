@@ -1,19 +1,42 @@
-# Inside the CPU Lab — Electricity to Arithmetic
+# مختبر وحدة المعالجة المركزية — من الكهرباء إلى الحساب
 
-An interactive educational website exploring how binary input values move through a simplified CPU model: registers, control logic, a CMOS inverter, Boolean gates, an arithmetic logic unit (ALU), and the output register.
+مرحبًا بك في مختبر التعلّم التفاعلي! 👋
 
-## Features
+## 🚀 ابدأ التعلّم
 
-- Addition, subtraction, multiplication, and division for integer inputs from 0–9.
-- Binary input registers and an 8-bit result register with signed two's-complement encoding for negative subtraction results.
-- A ten-step signal journey you can inspect one stage at a time.
-- Seven interactive logic-gate demonstrations with live truth tables: NOT, AND, OR, NAND, NOR, XOR, and XNOR.
-- An idealized CMOS inverter lab showing complementary PMOS/NMOS switching.
-- Illustrative clock profiles and timing estimates.
-- Responsive dark interface; the website is self-contained in `index.html` and needs no framework or package install.
+**افتح الموقع مباشرة من الرابط التالي:**
 
+### 👉 https://tari9bro.github.io/Electricity-to-Arithmetic/
 
+لا تحتاج إلى تحميل أي ملف أو تثبيت أي برنامج أو كتابة أي كود. افتح الرابط في المتصفح وابدأ التعلّم.
 
-## Educational note
+## 📘 ماذا ستتعلّم؟
 
-This is a conceptual model, not a commercial CPU emulator or a semiconductor-physics simulator. The arithmetic output is computed exactly for the supported input range, while the depicted signal propagation, transistor states, and timing are explanatory rather than measured physical behavior.
+من خلال المحاكاة التفاعلية، ستتعرّف على كيفية معالجة الحاسوب للأعداد والإشارات، ومن ذلك:
+
+- **النظام الثنائي:** كيف تُمثَّل الأعداد باستخدام 0 و1.
+- **السجلات:** كيف تُخزَّن قيم الإدخال والنتائج.
+- **البوابات المنطقية:** NOT وAND وOR وNAND وNOR وXOR وXNOR، مع إمكانية تجربة مداخلها ومشاهدة النتائج.
+- **العاكس CMOS:** فكرة عمل ترانزستوري PMOS وNMOS.
+- **وحدة الحساب والمنطق (ALU):** كيف تُنفَّذ عمليات الجمع والطرح والضرب والقسمة.
+- **انتقال الإشارات داخل المعالج:** تتبّع المراحل لفهم كيف تصل المدخلات إلى النتيجة.
+- **الساعة والتوقيت:** التعرّف على دور الساعة في تنظيم خطوات المعالجة.
+
+## 🧭 كيف تستخدم الموقع؟
+
+1. افتح رابط الموقع أعلاه.
+2. اختر اللغة المناسبة لك، إن كان خيار اللغة ظاهرًا.
+3. جرّب إدخال عددين، ثم اختر العملية الحسابية التي تريد فهمها.
+4. استخدم أزرار التشغيل والإيقاف والانتقال بين الخطوات لمتابعة حركة الإشارات. اختر السرعة البطيئة عند الحاجة إلى وقت أطول للفهم.
+5. جرّب البوابات المنطقية، وغيّر قيم المداخل ولاحظ كيف تتغيّر النتائج.
+6. راجع المصطلحات التعليمية عند ظهور كلمة جديدة، وأعد التجربة قدر ما تحتاج.
+
+## 🎯 نصيحة للطالب
+
+لا تكتفِ بمشاهدة النتيجة؛ **غيّر المدخلات، وتوقّع ما سيحدث، ثم شغّل المحاكاة للتحقّق من إجابتك.** دوّن ملاحظاتك وحاول شرح ما فهمته بكلماتك.
+
+> **ملاحظة تعليمية:** هذا الموقع محاكاة مبسّطة للتعلّم وفهم المبادئ الأساسية، وليس محاكاة كاملة لمعالج تجاري أو قياسًا فعليًا للظواهر الفيزيائية داخل الشرائح الإلكترونية.
+
+---
+
+**بالتوفيق في التعلّم والاستكشاف!** ⚡
