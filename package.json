@@ -1,0 +1,13 @@
+{
+  "name": "inside-the-cpu-lab",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "An interactive educational 3D CPU simulator for binary arithmetic, logic gates, transistors, and timing models.",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "build": "node scripts/build.mjs",
+    "preview": "node scripts/serve.mjs dist",
+    "test": "node --test"
+  }
+}
