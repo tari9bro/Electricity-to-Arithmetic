@@ -234,6 +234,8 @@ byId('bits').innerHTML=shown.split('').map(function(v,i){var title=ready?(lang==
 function paint(){
 if(!state.stages.length)return;
 var active=state.stages[state.stage],focus=active[3],r=state.currentResult,view=stageView(active,state.stage,r),labels=routeLabels();
+var targets=[[151,100],[151,122],[151,235],[329,51],[178,155],[329,287],[329,155],[483,170],[653,170],[580,190]];
+var point=targets[state.stage]||targets[0],px=point[0],py=point[1];
 ['nodeA','nodeB','nodeControl','nodeTrans','nodeGate','nodeALU','nodeOutput'].forEach(function(id){byId(id).classList.toggle('active',id===focus);});
 function show(id,on){byId(id).style.opacity=on?'1':'0';}
 show('pulseControl',state.stage===3);show('dotControl',state.stage===3);
@@ -241,6 +243,21 @@ show('pulseA',state.stage===4);show('pulseB',state.stage===4);show('dotA',state.
 show('pulseTrans',state.stage===5);show('dotTrans',state.stage===5);
 show('pulseGate',state.stage===6);show('dotGate',state.stage===6);
 show('pulseOut',state.stage===8);show('dotOutput',state.stage===8);
+byId('calloutLeader').setAttribute('d','M700 175 L665 175 L665 '+py+' L'+px+' '+py);
+byId('calloutPin').setAttribute('cx',px);byId('calloutPin').setAttribute('cy',py);
+byId('calloutHalo').setAttribute('cx',px);byId('calloutHalo').setAttribute('cy',py);
+byId('calloutKicker').textContent=view.kicker;
+byId('calloutTitle').textContent=view.title;
+byId('calloutText').textContent=view.description;
+var focusNames={
+en:['INPUT REGISTERS','BINARY ENCODING','INPUT REGISTERS','CONTROL UNIT','SIGNAL PATH','CMOS TRANSISTORS','LOGIC GATES','ARITHMETIC LOGIC UNIT','OUTPUT REGISTER','OUTPUT REGISTER'],
+fr:['REGISTRES D’ENTRÉE','CODAGE BINAIRE','REGISTRES D’ENTRÉE','UNITÉ DE COMMANDE','CHEMIN DU SIGNAL','TRANSISTORS CMOS','PORTES LOGIQUES','UNITÉ ARITHMÉTIQUE ET LOGIQUE','REGISTRE DE SORTIE','REGISTRE DE SORTIE'],
+ar:['سجلات الإدخال','الترميز الثنائي','سجلات الإدخال','وحدة التحكم','مسار الإشارة','ترانزستورات CMOS','البوابات المنطقية','وحدة الحساب والمنطق','سجل الخرج','سجل الخرج']
+};
+var footText=(focusNames[state.lang]||focusNames.en)[state.stage];
+byId('calloutFoot').textContent=(state.lang==='fr'?'POINT VISÉ · ':state.lang==='ar'?'الموضع المحدد · ':'FOCUS · ')+footText;
+var callout=byId('signalCalloutCard');
+callout.classList.remove('callout-in');void callout.offsetWidth;callout.classList.add('callout-in');
 byId('phaseChip').textContent=view.kicker.split(' / ')[1];
 byId('stageCount').textContent=state.lang==='fr'?'Étape '+(state.stage+1)+' sur '+state.stages.length:state.lang==='ar'?'المرحلة '+(state.stage+1)+' من '+state.stages.length:'Stage '+(state.stage+1)+' of '+state.stages.length;
 byId('stageKicker').textContent=view.kicker;byId('stageTitle').textContent=view.title;byId('stageDescription').textContent=view.description;
