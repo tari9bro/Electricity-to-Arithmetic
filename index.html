@@ -51,6 +51,18 @@
 <rect class="node out" id="nodeOutput" x="515" y="137" width="130" height="66" rx="10"/>
 <text class="svgsub" x="527" y="156">OUTPUT REGISTER</text><text class="svglabel" x="527" y="174">RESULT</text><text class="svgbit" id="svgResult" x="527" y="190">--------</text>
 <text class="svgsub" x="32" y="306">DATA IN</text><text class="svgsub" x="548" y="225">DATA OUT</text>
+<text class="journey-title" id="routeTitle" x="27" y="38">SIGNAL JOURNEY</text>
+<path class="journey-track" d="M42 318H645"/>
+<g id="journeyStep0" class="journey-step active"><circle cx="42" cy="318" r="8"/><text class="journey-number" x="42" y="321">1</text><text class="journey-label" id="journeyLabel0" x="42" y="338">INPUT</text></g>
+<g id="journeyStep1" class="journey-step"><circle cx="109" cy="318" r="8"/><text class="journey-number" x="109" y="321">2</text><text class="journey-label" id="journeyLabel1" x="109" y="338">BINARY</text></g>
+<g id="journeyStep2" class="journey-step"><circle cx="176" cy="318" r="8"/><text class="journey-number" x="176" y="321">3</text><text class="journey-label" id="journeyLabel2" x="176" y="338">REGISTERS</text></g>
+<g id="journeyStep3" class="journey-step"><circle cx="243" cy="318" r="8"/><text class="journey-number" x="243" y="321">4</text><text class="journey-label" id="journeyLabel3" x="243" y="338">CONTROL</text></g>
+<g id="journeyStep4" class="journey-step"><circle cx="310" cy="318" r="8"/><text class="journey-number" x="310" y="321">5</text><text class="journey-label" id="journeyLabel4" x="310" y="338">SIGNALS</text></g>
+<g id="journeyStep5" class="journey-step"><circle cx="377" cy="318" r="8"/><text class="journey-number" x="377" y="321">6</text><text class="journey-label" id="journeyLabel5" x="377" y="338">SWITCH</text></g>
+<g id="journeyStep6" class="journey-step"><circle cx="444" cy="318" r="8"/><text class="journey-number" x="444" y="321">7</text><text class="journey-label" id="journeyLabel6" x="444" y="338">GATES</text></g>
+<g id="journeyStep7" class="journey-step"><circle cx="511" cy="318" r="8"/><text class="journey-number" x="511" y="321">8</text><text class="journey-label" id="journeyLabel7" x="511" y="338">ALU</text></g>
+<g id="journeyStep8" class="journey-step"><circle cx="578" cy="318" r="8"/><text class="journey-number" x="578" y="321">9</text><text class="journey-label" id="journeyLabel8" x="578" y="338">WRITE BACK</text></g>
+<g id="journeyStep9" class="journey-step"><circle cx="645" cy="318" r="8"/><text class="journey-number" x="645" y="321">10</text><text class="journey-label" id="journeyLabel9" x="645" y="338">RESULT</text></g>
 </svg></div>
 <div class="legend"><span><i style="background:var(--cyan)"></i>Binary signal</span><span><i style="background:var(--lime)"></i>Result path</span><span><i style="background:#3a5775"></i>Inactive circuit</span></div>
 <div class="controls"><div class="fields"><div class="field"><label for="inputA">Input A (0–9)</label><input id="inputA" type="number" min="0" max="9" step="1" value="3"></div><div class="field"><label for="inputB">Input B (0–9)</label><input id="inputB" type="number" min="0" max="9" step="1" value="2"></div><div class="field"><label for="operation">ALU operation</label><select id="operation"><option value="add">Addition (+)</option><option value="sub">Subtraction (−)</option><option value="mul">Multiplication (×)</option><option value="div">Division (÷)</option></select></div></div>
