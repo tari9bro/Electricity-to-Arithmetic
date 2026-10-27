@@ -12,24 +12,7 @@ An interactive educational website exploring how binary input values move throug
 - Illustrative clock profiles and timing estimates.
 - Responsive dark interface; the website is self-contained in `index.html` and needs no framework or package install.
 
-## Run locally
 
-Open `index.html` directly in a modern browser, or use any static file server. This version does not require Node.js for the page itself.
-
-To run the supplemental arithmetic and gate engine tests with Node.js 22 or newer:
-
-```sh
-npm test
-```
-
-## Publish on GitHub Pages
-
-The repository contains the workflow at [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml). It runs tests, copies the site to `dist/`, and publishes `dist/` to GitHub Pages on each push to `main`.
-
-1. Open **Settings → Pages** for this repository.
-2. Under **Build and deployment**, set **Source** to **GitHub Actions**.
-3. Open the **Actions** tab and wait for **Deploy to GitHub Pages** to finish successfully.
-4. Visit the deployment URL shown by the workflow. For this repository it is normally [https://tari9bro.github.io/Electricity-to-Arithmetic/](https://tari9bro.github.io/Electricity-to-Arithmetic/).
 
 ## Educational note
 
