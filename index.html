@@ -191,17 +191,23 @@ function routeLabels(){return state.lang==='fr'?['ENTRÉE','BINAIRE','REGISTRES'
 function stopPlayback(){if(state.timer){clearInterval(state.timer);state.timer=null;}var btn=byId('run');if(btn)btn.textContent='▶ Run simulation';}
 function startPlayback(){stopPlayback();byId('run').textContent='⚡ Signal moving…';var delay=900*Number(byId('speed').value||1);state.timer=setInterval(function(){if(state.stage>=state.stages.length-1){stopPlayback();byId('run').textContent='↻ Run again';return;}state.stage+=1;paint();},delay);}
 function renderOutputState(){
-var r=state.currentResult;if(!r)return;var ready=state.stage>=8;
-byId('equation').textContent=ready?r.a+' '+op[r.op].symbol+' '+r.b+' =':r.a+' '+op[r.op].symbol+' '+r.b+'  →  ALU';
+var r=state.currentResult;if(!r)return;var ready=state.stage>=8,lang=state.lang;
+var aluName=lang==='fr'?'UAL':lang==='ar'?'وحدة الحساب':'ALU';
+byId('equation').textContent=r.a+' '+op[r.op].symbol+' '+r.b+(ready?' =':'  →  '+aluName);
 byId('value').textContent=ready?String(r.value):'…';
-byId('resultNote').textContent=ready?(r.op==='div'?'Quotient '+r.quotient+' · remainder '+r.remainder:r.value<0?'Negative · 8-bit two’s-complement representation':'Positive integer · unsigned representation'):'Output register waiting for the signal';
+var positive=t('Positive integer · unsigned representation');
+var waiting={en:'Output register waiting for the signal',fr:'Le registre de sortie attend le signal',ar:'سجل الخرج ينتظر الإشارة'};
+if(!ready)byId('resultNote').textContent=waiting[lang]||waiting.en;
+else if(r.op==='div')byId('resultNote').textContent=lang==='fr'?'Quotient '+r.quotient+' · reste '+r.remainder:lang==='ar'?'خارج القسمة '+r.quotient+' · الباقي '+r.remainder:'Quotient '+r.quotient+' · remainder '+r.remainder;
+else if(r.value<0)byId('resultNote').textContent=lang==='fr'?'Négatif · complément à deux sur 8 bits':lang==='ar'?'عدد سالب · المتمم الثنائي من 8 بت':'Negative · 8-bit two’s-complement representation';
+else byId('resultNote').textContent=positive;
 byId('svgResult').textContent=ready?r.resultBits:'--------';
 var shown=ready?r.resultBits:'········';
-byId('bits').innerHTML=shown.split('').map(function(v,i){return '<div class="bit '+(ready&&v==='1'?'on':'')+'" title="'+(ready?'Bit '+(7-i)+': '+v:'Waiting for bit '+(7-i))+'">'+v+'</div>';}).join('');
+byId('bits').innerHTML=shown.split('').map(function(v,i){var title=ready?(lang==='fr'?'Bit ':lang==='ar'?'البت ':'Bit ')+(7-i)+': '+v:(lang==='fr'?'En attente du bit ':lang==='ar'?'بانتظار البت ':'Waiting for bit ')+(7-i);return '<div class="bit '+(ready&&v==='1'?'on':'')+'" title="'+title+'">'+v+'</div>';}).join('');
 }
 function paint(){
 if(!state.stages.length)return;
-var active=state.stages[state.stage],focus=active[3];
+var active=state.stages[state.stage],focus=active[3],r=state.currentResult,view=stageView(active,state.stage,r),labels=routeLabels();
 ['nodeA','nodeB','nodeControl','nodeTrans','nodeGate','nodeALU','nodeOutput'].forEach(function(id){byId(id).classList.toggle('active',id===focus);});
 function show(id,on){byId(id).style.opacity=on?'1':'0';}
 show('pulseControl',state.stage===3);show('dotControl',state.stage===3);
@@ -209,10 +215,11 @@ show('pulseA',state.stage===4);show('pulseB',state.stage===4);show('dotA',state.
 show('pulseTrans',state.stage===5);show('dotTrans',state.stage===5);
 show('pulseGate',state.stage===6);show('dotGate',state.stage===6);
 show('pulseOut',state.stage===8);show('dotOutput',state.stage===8);
-byId('phaseChip').textContent=active[0].split(' / ')[1];
-byId('stageCount').textContent='Stage '+(state.stage+1)+' of '+state.stages.length;
-byId('stageKicker').textContent=active[0];byId('stageTitle').textContent=active[1];byId('stageDescription').textContent=active[2];
-byId('steps').innerHTML=state.stages.map(function(s,i){return '<button type="button" class="step '+(i===state.stage?'active':'')+'" data-stage="'+i+'"><span class="num">'+String(i+1).padStart(2,'0')+'</span><span><span class="steptitle">'+s[1]+'</span><span class="stepdesc">'+s[0].split(' / ')[1]+'</span></span></button>';}).join('');
+byId('phaseChip').textContent=view.kicker.split(' / ')[1];
+byId('stageCount').textContent=state.lang==='fr'?'Étape '+(state.stage+1)+' sur '+state.stages.length:state.lang==='ar'?'المرحلة '+(state.stage+1)+' من '+state.stages.length:'Stage '+(state.stage+1)+' of '+state.stages.length;
+byId('stageKicker').textContent=view.kicker;byId('stageTitle').textContent=view.title;byId('stageDescription').textContent=view.description;
+labels.forEach(function(label,i){byId('journeyLabel'+i).textContent=label;var group=byId('journeyStep'+i);group.classList.toggle('active',i===state.stage);group.classList.toggle('done',i<state.stage);});
+byId('steps').innerHTML=state.stages.map(function(s,i){var v=stageView(s,i,r);return '<button type="button" class="step '+(i===state.stage?'active':'')+'" data-stage="'+i+'"><span class="num">'+String(i+1).padStart(2,'0')+'</span><span><span class="steptitle">'+v.title+'</span><span class="stepdesc">'+v.kicker.split(' / ')[1]+'</span></span></button>';}).join('');
 byId('steps').querySelectorAll('[data-stage]').forEach(function(b){b.addEventListener('click',function(){stopPlayback();state.stage=Number(b.dataset.stage);paint();});});
 byId('prev').disabled=state.stage===0;byId('next').disabled=state.stage===state.stages.length-1;
 renderOutputState();
@@ -222,7 +229,7 @@ var r=resultData();state.profile=byId('clock').value;state.speed=Number(byId('sp
 byId('binaryA').textContent=r.aBits;byId('binaryB').textContent=r.bBits;byId('svgA').textContent=r.aBits;byId('svgB').textContent=r.bBits;byId('svgOp').textContent=r.op.toUpperCase();byId('svgALUSub').textContent=op[r.op].alu;
 byId('profile').textContent=clocks[state.profile].label;var ns=op[r.op].cycles/clocks[state.profile].hz*1000000000;byId('estimate').textContent=ns>=1000?(ns/1000).toFixed(2)+' μs':ns.toFixed(ns<10?1:0)+' ns';
 paint();if(animate!==false)startPlayback();
-}catch(e){byId('error').textContent=e.message;}}
+}catch(e){byId('error').textContent=state.lang==='fr'?(e.message==='Division by zero is undefined. Choose a divisor from 1 to 9.'?'La division par zéro est impossible. Choisissez un diviseur de 1 à 9.':e.message.replace('Input A must be a whole number from 0 to 9.','A doit être un entier de 0 à 9.').replace('Input B must be a whole number from 0 to 9.','B doit être un entier de 0 à 9.')):state.lang==='ar'?(e.message==='Division by zero is undefined. Choose a divisor from 1 to 9.'?'القسمة على صفر غير ممكنة. اختر مقسوماً عليه من 1 إلى 9.':e.message.replace('Input A must be a whole number from 0 to 9.','يجب أن تكون A عدداً صحيحاً من 0 إلى 9.').replace('Input B must be a whole number from 0 to 9.','يجب أن تكون B عدداً صحيحاً من 0 إلى 9.')):e.message;}}
 byId('run').addEventListener('click',run);
 byId('reset').addEventListener('click',function(){stopPlayback();byId('inputA').value='3';byId('inputB').value='2';byId('operation').value='add';byId('clock').value='edu';byId('speed').value='1';run();});
 byId('prev').addEventListener('click',function(){stopPlayback();state.stage=Math.max(0,state.stage-1);paint();});
@@ -239,12 +246,27 @@ NOR:{symbol:'⊽',formula:'OUTPUT = NOT (A OR B)',text:'NOR returns 1 only when 
 XOR:{symbol:'⊕',formula:'OUTPUT = A XOR B',text:'XOR returns 1 when the inputs are different.',fn:function(a,b){return a!==b?1:0;}},
 XNOR:{symbol:'⊙',formula:'OUTPUT = NOT (A XOR B)',text:'XNOR returns 1 when both inputs are equal.',fn:function(a,b){return a===b?1:0;}}
 };
-function renderGate(){var g=gates[state.gate],out=g.fn(state.a,state.b);byId('gateA').textContent=state.a;byId('gateB').textContent=state.b;byId('gateY').textContent=out;byId('toggleA').classList.toggle('on',!!state.a);byId('toggleB').classList.toggle('on',!!state.b);byId('toggleB').style.display=state.gate==='NOT'?'none':'inline-block';byId('gateSymbol').style.display=state.gate==='NOT'?'none':'inline';byId('headB').style.display=state.gate==='NOT'?'none':'table-cell';byId('formula').textContent=g.formula;byId('gateSymbol').textContent=g.symbol;byId('gateText').textContent=g.text;var rows=state.gate==='NOT'?[{a:0,b:0,y:1},{a:1,b:0,y:0}]:[0,1].flatMap(function(a){return [0,1].map(function(b){return {a:a,b:b,y:g.fn(a,b)};});});byId('truth').innerHTML=rows.map(function(r){return '<tr class="'+(r.a===state.a&&(state.gate==='NOT'||r.b===state.b)?'currentrow':'')+'"><td>'+r.a+'</td><td style="'+(state.gate==='NOT'?'display:none':'')+'">'+r.b+'</td><td>'+r.y+'</td></tr>';}).join('');}
+function renderGate(){
+var g=gates[state.gate],out=g.fn(state.a,state.b);
+var gateCopy={
+fr:{AND:['SORTIE = A ET B','ET renvoie 1 uniquement lorsque les deux entrées valent 1.'],OR:['SORTIE = A OU B','OU renvoie 1 lorsqu’au moins une entrée vaut 1.'],NOT:['SORTIE = NON A','NON inverse le bit : 0 devient 1 et 1 devient 0.'],NAND:['SORTIE = NON (A ET B)','NAND ne renvoie 0 que lorsque les deux entrées valent 1.'],NOR:['SORTIE = NON (A OU B)','NOR renvoie 1 uniquement lorsque les deux entrées valent 0.'],XOR:['SORTIE = A XOR B','XOR renvoie 1 lorsque les entrées sont différentes.'],XNOR:['SORTIE = NON (A XOR B)','XNOR renvoie 1 lorsque les entrées sont égales.']},
+ar:{AND:['الخرج = A وَ B','تعطي بوابة AND القيمة 1 فقط عندما تكون المدخلات كلاهما 1.'],OR:['الخرج = A أو B','تعطي بوابة OR القيمة 1 عندما يكون أحد المدخلين على الأقل 1.'],NOT:['الخرج = NOT A','تعكس بوابة NOT البت: يتحول 0 إلى 1 و1 إلى 0.'],NAND:['الخرج = NOT (A وَ B)','تعطي بوابة NAND القيمة 0 فقط عندما يكون المدخلان كلاهما 1.'],NOR:['الخرج = NOT (A أو B)','تعطي بوابة NOR القيمة 1 فقط عندما يكون المدخلان كلاهما 0.'],XOR:['الخرج = A XOR B','تعطي بوابة XOR القيمة 1 عندما يختلف المدخلان.'],XNOR:['الخرج = NOT (A XOR B)','تعطي بوابة XNOR القيمة 1 عندما يتساوى المدخلان.']}
+};
+var copy=gateCopy[state.lang]&&gateCopy[state.lang][state.gate];
+byId('gateA').textContent=state.a;byId('gateB').textContent=state.b;byId('gateY').textContent=out;byId('toggleA').classList.toggle('on',!!state.a);byId('toggleB').classList.toggle('on',!!state.b);byId('toggleB').style.display=state.gate==='NOT'?'none':'inline-block';byId('gateSymbol').style.display=state.gate==='NOT'?'none':'inline';byId('headB').style.display=state.gate==='NOT'?'none':'table-cell';byId('formula').textContent=copy?copy[0]:g.formula;byId('gateSymbol').textContent=g.symbol;byId('gateText').textContent=copy?copy[1]:g.text;
+var rows=state.gate==='NOT'?[{a:0,b:0,y:1},{a:1,b:0,y:0}]:[0,1].flatMap(function(a){return [0,1].map(function(b){return {a:a,b:b,y:g.fn(a,b)};});});
+byId('truth').innerHTML=rows.map(function(r){return '<tr class="'+(r.a===state.a&&(state.gate==='NOT'||r.b===state.b)?'currentrow':'')+'"><td>'+r.a+'</td><td style="'+(state.gate==='NOT'?'display:none':'')+'">'+r.b+'</td><td>'+r.y+'</td></tr>';}).join('');
+}
 byId('gatePicker').querySelectorAll('[data-gate]').forEach(function(b){b.addEventListener('click',function(){state.gate=b.dataset.gate;byId('gatePicker').querySelectorAll('button').forEach(function(x){x.classList.toggle('active',x===b);});renderGate();});});
 byId('toggleA').addEventListener('click',function(){state.a=1-state.a;renderGate();});byId('toggleB').addEventListener('click',function(){state.b=1-state.b;renderGate();});
-function renderTrans(){var high=state.trans===1;byId('transInValue').textContent=high?'HIGH · 1':'LOW · 0';byId('transInput').classList.toggle('on',!high);byId('pmos').classList.toggle('off',high);byId('nmos').classList.toggle('off',!high);byId('pmosState').textContent=high?'OFF · not conducting':'ON · conducting';byId('nmosState').textContent=high?'ON · conducting':'OFF · not conducting';byId('voltageIn').textContent=high?'VDD · HIGH':'0 V · LOW';byId('voltageOut').textContent=high?'0 V · LOW':'VDD · HIGH';}
+function renderTrans(){
+var high=state.trans===1,lang=state.lang;
+var s=lang==='fr'?{high:'HAUT · 1',low:'BAS · 0',on:'ACTIF · conducteur',off:'INACTIF · bloqué',vhi:'VDD · HAUT',vlo:'0 V · BAS'}:lang==='ar'?{high:'مرتفع · 1',low:'منخفض · 0',on:'يعمل · موصل',off:'متوقف · غير موصل',vhi:'VDD · مرتفع',vlo:'0 فولت · منخفض'}:{high:'HIGH · 1',low:'LOW · 0',on:'ON · conducting',off:'OFF · not conducting',vhi:'VDD · HIGH',vlo:'0 V · LOW'};
+byId('transInValue').textContent=high?s.high:s.low;byId('transInput').classList.toggle('on',!high);byId('pmos').classList.toggle('off',high);byId('nmos').classList.toggle('off',!high);byId('pmosState').textContent=high?s.off:s.on;byId('nmosState').textContent=high?s.on:s.off;byId('voltageIn').textContent=high?s.vhi:s.vlo;byId('voltageOut').textContent=high?s.vlo:s.vhi;
+}
 byId('transToggle').addEventListener('click',function(){state.trans=1-state.trans;renderTrans();});byId('transInput').addEventListener('click',function(){state.trans=1-state.trans;renderTrans();});
-run(false);renderGate();renderTrans();
+document.querySelectorAll('[data-lang]').forEach(function(btn){btn.addEventListener('click',function(){setLanguage(btn.dataset.lang);renderGate();renderTrans();if(state.stages.length)paint();});});
+setLanguage('en');run(false);renderGate();renderTrans();
 })();
 </script>
 </body>
